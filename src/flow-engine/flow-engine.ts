@@ -4,12 +4,12 @@ import {
   IDOMElement,
   IRunCounter,
   IRectNodeComponent,
-  createContextInstanceApp,
-  CanvasAppInstance,
+  createRuntimeFlowContext,
   INodeComponent,
   NodeType,
   FlowNode,
   importToCanvas,
+  IFlowCanvasBase,
 } from "@devhelpr/visual-programming-system";
 import {
   setupCanvasNodeTaskRegistry,
@@ -25,9 +25,9 @@ import {
 } from "@devhelpr/web-flow-executor";
 
 export class FlowEngine {
-  public canvasApp: CanvasAppInstance<NodeInfo>;
+  public canvasApp: IFlowCanvasBase<NodeInfo>;
   constructor() {
-    this.canvasApp = createContextInstanceApp<NodeInfo>();
+    this.canvasApp = createRuntimeFlowContext<NodeInfo>();
   }
   initialize(flow: FlowNode<NodeInfo>[]) {
     if (!this.canvasApp) {

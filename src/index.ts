@@ -3,42 +3,49 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
 import { FlowEngine } from "./flow-engine/flow-engine";
-import {
-  endpoints as cfEndpoints,
-  flow as cfFlow,
-} from "./flow/celsius-fahrenheit";
+import { endpoints, flow, metaData } from "./flow/vps-flow";
 const app = new OpenAPIHono();
 
 app.doc("/doc", {
   openapi: "3.0.0",
   info: {
     version: "1.0.0",
-    title: "API based on code-flow-canvas flow",
+    title: metaData.title ?? "API based on code-flow-canvas flow",
+    description: "API based on code-flow-canvas flow",
   },
 });
 
-Object.entries(cfEndpoints).forEach(([key, value]) => {
+Object.entries(endpoints).forEach(([key, value]) => {
+  const flowEndpoint = value;
   let outputSchema: any = {};
-  value.outputs.forEach((output) => {
-    outputSchema[output.name] =
-      output.type === "show-value" ? z.number() : z.string();
-  });
+  if (flowEndpoint.outputs.length > 0) {
+    flowEndpoint.outputs.forEach((output: any) => {
+      outputSchema[output.name] =
+        output.type === "show-value" ? z.number() : z.string();
+    });
+  } else {
+    outputSchema["result"] = z.string();
+  }
+
   const route = createRoute({
     method: "get" as const,
     path: value.name,
-    tags: ["Celsius Fahrenheit converter"],
-    request: {
-      query: z.object({
-        [value.name]: z.string().openapi({
-          param: {
-            name: value.name,
-            in: "query",
-          },
-          type: "string",
-          example: "25",
-        }),
-      }),
-    },
+    tags: [value.group ?? "Flow api"],
+    request:
+      value.type !== "start-node"
+        ? {
+            query: z.object({
+              [value.name]: z.string().openapi({
+                param: {
+                  name: value.name,
+                  in: "query",
+                },
+                type: "string",
+                example: "25",
+              }),
+            }),
+          }
+        : undefined,
     responses: {
       200: {
         content: {
@@ -63,21 +70,35 @@ Object.entries(cfEndpoints).forEach(([key, value]) => {
   app.openapi(route, async (c) => {
     try {
       const flowEngine = new FlowEngine();
-      if (cfFlow?.flows?.flow?.nodes) {
-        flowEngine.initialize(cfFlow.flows.flow.nodes);
+      if (flow?.flows?.flow?.nodes) {
+        flowEngine.initialize(flow.flows.flow.nodes);
         let outputs: any = {};
         value.outputs.forEach((output) => {
           console.log("output", output);
-          flowEngine.canvasApp.setOnNodeMessage((key, inputValue) => {
-            console.log("output", inputValue);
-            if (value.outputs.find((o: any) => o.name === key)) {
-              outputs[key] = inputValue;
+          flowEngine.canvasApp.setOnNodeMessage(
+            (key: string, inputValue: string) => {
+              console.log("output", inputValue);
+              if (value.outputs.find((o: any) => o.name === key)) {
+                outputs[key] = inputValue;
+              }
             }
-          });
+          );
         });
-        const inputValue = c.req.valid("query")?.[value.name];
-        const result = await flowEngine.runNode(value.id, inputValue);
-        console.log("result", result);
+        const inputValue = c?.req?.valid("query" as never)?.[value.name];
+        if (key === "default") {
+          const result = await flowEngine.run(inputValue);
+          console.log("result", result);
+        } else {
+          const result = await flowEngine.runNode(value.id, inputValue);
+          if (
+            (key.startsWith("default") &&
+              Object.entries(outputs).length === 0) ||
+            flowEndpoint.type === "start-node"
+          ) {
+            outputs = { result: result };
+          }
+          console.log("result", result);
+        }
         flowEngine.destroy();
         return c.json(outputs, 200);
       } else {
