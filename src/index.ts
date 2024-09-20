@@ -87,7 +87,8 @@ Object.entries(endpoints).forEach(([key, value]) => {
         const inputValue = c?.req?.valid("query" as never)?.[value.name];
         if (key === "default") {
           const result = await flowEngine.run(inputValue);
-          console.log("result", result);
+          outputs = { result: result };
+          console.log("result", result, outputs);
         } else {
           const result = await flowEngine.runNode(value.id, inputValue);
           if (
@@ -97,7 +98,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
           ) {
             outputs = { result: result };
           }
-          console.log("result", result);
+          console.log("result", result, outputs);
         }
         flowEngine.destroy();
         return c.json(outputs, 200);
@@ -112,7 +113,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
   });
 });
 
-app.get("/ui", swaggerUI({ url: "/doc" }));
+app.get("/swagger", swaggerUI({ url: "/doc" }));
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);
