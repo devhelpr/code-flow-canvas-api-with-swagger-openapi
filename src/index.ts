@@ -3,7 +3,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
 import { FlowEngine } from "./flow-engine/flow-engine";
-import { endpoints, flow, metaData } from "./flow/celsius-fahrenheit";
+import { endpoints, flow, metaData } from "./flow/codeflowcanvas-flow";
 const app = new OpenAPIHono();
 
 app.doc("/doc", {
@@ -78,7 +78,11 @@ Object.entries(endpoints).forEach(([key, value]) => {
           flowEngine.canvasApp.setOnNodeMessage(
             (key: string, inputValue: string) => {
               console.log("output", inputValue);
-              if (value.outputs.find((o: any) => o.name === key)) {
+              const searchOutput = value.outputs.find(
+                (o: any) => o.name === key
+              );
+              if (searchOutput) {
+                console.log("searchOutput", searchOutput);
                 outputs[key] = inputValue;
               }
             }
@@ -87,18 +91,22 @@ Object.entries(endpoints).forEach(([key, value]) => {
         const inputValue = c?.req?.valid("query" as never)?.[value.name];
         if (key === "default") {
           const result = await flowEngine.run(inputValue);
-          outputs = { result: result };
-          console.log("result", result, outputs);
+          if (Object.entries(outputs).length === 0) {
+            console.log("result1", result, outputs);
+
+            outputs = { result: result };
+          }
         } else {
           const result = await flowEngine.runNode(value.id, inputValue);
           if (
             (key.startsWith("default") &&
               Object.entries(outputs).length === 0) ||
-            flowEndpoint.type === "start-node"
+            (flowEndpoint.type === "start-node" &&
+              Object.entries(outputs).length === 0)
           ) {
             outputs = { result: result };
           }
-          console.log("result", result, outputs);
+          console.log("result2", result, outputs);
         }
         flowEngine.destroy();
         return c.json(outputs, 200);
