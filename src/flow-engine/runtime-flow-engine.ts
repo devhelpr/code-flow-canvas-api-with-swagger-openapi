@@ -24,7 +24,7 @@ import {
   runNode,
 } from "@devhelpr/web-flow-executor";
 
-export class FlowEngine {
+export class RuntimeFlowEngine {
   public canvasApp: IFlowCanvasBase<NodeInfo>;
   constructor() {
     this.canvasApp = createRuntimeFlowContext<NodeInfo>();
@@ -97,12 +97,14 @@ export class FlowEngine {
     if (node.nodeType === NodeType.Shape) {
       return new Promise<string>((resolve, reject) => {
         const runCounter = new RunCounter();
+        let output: any;
         runCounter.setRunCounterResetHandler(() => {
           if (runCounter.runCounter <= 0) {
             console.log(
               "setRunCounterResetHandler: runCounter.runCounter <= 0"
             );
             increaseRunIndex();
+            resolve(output?.toString() ?? "");
           } else {
             console.log(
               "setRunCounterResetHandler: runCounter.runCounter > 0",
@@ -115,7 +117,7 @@ export class FlowEngine {
           this.canvasApp,
           (input) => {
             console.log("run finished", input);
-            resolve(input.toString());
+            output = input;
           },
           input,
           undefined,
@@ -136,15 +138,20 @@ export class FlowEngine {
   private runFlow = (input?: any) => {
     return new Promise<string>((resolve, reject) => {
       const runCounter = new RunCounter();
+      let output: any;
+
       runCounter.setRunCounterResetHandler(() => {
         if (runCounter.runCounter <= 0) {
           console.log("setRunCounterResetHandler: runCounter.runCounter <= 0");
           increaseRunIndex();
+          resolve(output?.toString() ?? "");
         } else {
           console.log(
             "setRunCounterResetHandler: runCounter.runCounter > 0",
             runCounter.runCounter
           );
+
+          console.log("runCounter", runCounter.runCounter);
         }
       });
       run(
@@ -152,7 +159,7 @@ export class FlowEngine {
         this.canvasApp,
         (input) => {
           console.log("run finished", input);
-          resolve(input.toString());
+          output = input;
         },
         input,
         undefined,

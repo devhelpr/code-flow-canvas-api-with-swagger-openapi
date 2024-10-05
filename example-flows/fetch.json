@@ -1,0 +1,124 @@
+{
+    schemaType: "flow",
+    schemaVersion: "0.0.1",
+    id: "1234",
+    flows: {
+      flow: {
+        flowType: "flow",
+        nodes: [
+          {
+            id: "8e27b7be-d0e2-4d44-a7e2-216413204c51",
+            x: 4599.839725163124,
+            y: 1368.8656095043173,
+            width: 200,
+            height: 155,
+            nodeType: "Shape",
+            nodeInfo: {
+              type: "fetch",
+              formValues: {
+                url: "https://rickandmortyapi.com/api/character/22",
+                ["http-method"]: "get"
+              },
+              isSettingsPopup: true
+            }
+          },
+          {
+            id: "1ea471d1-5c6d-4400-b874-485d6ff3910e",
+            x: 4324.65350344097,
+            y: 1410.8538049089227,
+            width: 50,
+            height: 50,
+            nodeType: "Shape",
+            nodeInfo: {
+              type: "start-node",
+              formValues: {
+                name: "rickandmorty",
+                group: "rickandmorty"
+              }
+            }
+          },
+          {
+            id: "7c14e4a4-b3b3-4f23-8237-a49dc1fa7f8c",
+            x: 4942.203308379393,
+            y: 1366.4270236692382,
+            width: 200,
+            height: 100,
+            nodeType: "Shape",
+            nodeInfo: {
+              type: "expression",
+              formValues: {
+                expression: "303",
+                inputType: "number"
+              },
+              showFormOnlyInPopup: true,
+              isSettingsPopup: true
+            }
+          },
+          {
+            id: "579d835b-3a25-4b14-b991-1ebd63d0736e",
+            x: 4349.65350344097,
+            y: 1435.8538049089227,
+            endX: 4599.839725163124,
+            endY: 1446.3656095043173,
+            startNodeId: "1ea471d1-5c6d-4400-b874-485d6ff3910e",
+            endNodeId: "8e27b7be-d0e2-4d44-a7e2-216413204c51",
+            startThumbName: "output",
+            endThumbName: "input",
+            lineType: "Straight",
+            nodeType: "Connection",
+            layer: 1,
+            nodeInfo: {}
+          },
+          {
+            id: "9004ba8e-970f-4d58-9c0f-8dbeea504a2c",
+            x: 4799.839725163124,
+            y: 1398.8656095043173,
+            endX: 4942.203308379393,
+            endY: 1416.4270236692382,
+            startNodeId: "8e27b7be-d0e2-4d44-a7e2-216413204c51",
+            endNodeId: "7c14e4a4-b3b3-4f23-8237-a49dc1fa7f8c",
+            startThumbName: "output",
+            endThumbName: "input",
+            lineType: "BezierCubic",
+            nodeType: "Connection",
+            layer: 1,
+            nodeInfo: {}
+          },
+          {
+            id: "713b4385-6378-4632-a48f-887056c8b41c",
+            x: 5142.203308379393,
+            y: 1416.4270236692382,
+            endX: 5428.570202463526,
+            endY: 1448.4142065555532,
+            startNodeId: "7c14e4a4-b3b3-4f23-8237-a49dc1fa7f8c",
+            endNodeId: "6a7b58b9-5e60-41f3-a932-694c4e54dce8",
+            startThumbName: "output",
+            endThumbName: "input",
+            lineType: "BezierCubic",
+            nodeType: "Connection",
+            layer: 1,
+            nodeInfo: {}
+          },
+          {
+            id: "6a7b58b9-5e60-41f3-a932-694c4e54dce8",
+            x: 5428.570202463526,
+            y: 1418.4142065555532,
+            width: 119.99999620249591,
+            height: 56.00000631474936,
+            nodeType: "Shape",
+            nodeInfo: {
+              type: "show-value",
+              formValues: {
+                append: "",
+                decimals: "0",
+                name: "test-value"
+              },
+              isSettingsPopup: true,
+              taskType: "show-value"
+            }
+          }
+        ]
+      }
+    },
+    compositions: {}
+  }

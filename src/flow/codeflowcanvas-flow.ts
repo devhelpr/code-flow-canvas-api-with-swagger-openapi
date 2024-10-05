@@ -87,15 +87,17 @@ export const flow: Flow<NodeInfo> = {
             formValues: {
               expression: "(input - 32) * (5/9)",
               inputType: "number"
-            }
+            },
+            showFormOnlyInPopup: true,
+            isSettingsPopup: true
           }
         },
         {
           id: "27587f70-864a-4140-aadf-7e81cff03084",
           x: 4397.689143766105,
           y: 1890.5120317473811,
-          width: 119.99982991035986,
-          height: 84.00010519827325,
+          width: 120.00020143934616,
+          height: 84.00004772960449,
           nodeType: "Shape",
           nodeInfo: {
             type: "variable",
@@ -113,8 +115,8 @@ export const flow: Flow<NodeInfo> = {
           id: "229132a7-c788-4de2-8cda-d53c31f5d190",
           x: 4346.805090064974,
           y: 1185.014179156044,
-          width: 120.00027843240255,
-          height: 83.99999306776257,
+          width: 119.99973504965708,
+          height: 83.99993113218223,
           nodeType: "Shape",
           nodeInfo: {
             type: "variable",
@@ -160,6 +162,7 @@ export const flow: Flow<NodeInfo> = {
             formValues: {
               variableName: "fahrenheit"
             },
+            nodeCannotBeReplaced: false,
             showFormOnlyInPopup: false,
             useInCompositionOnly: false
           }
@@ -176,7 +179,9 @@ export const flow: Flow<NodeInfo> = {
             formValues: {
               expression: "input * (9/5) + 32",
               inputType: "number"
-            }
+            },
+            showFormOnlyInPopup: true,
+            isSettingsPopup: true
           }
         },
         {
@@ -219,15 +224,17 @@ export const flow: Flow<NodeInfo> = {
             formValues: {
               expression: "input + 273.15",
               inputType: "number"
-            }
+            },
+            showFormOnlyInPopup: true,
+            isSettingsPopup: true
           }
         },
         {
           id: "16bfd0bb-fc8d-486d-b6dd-d45de7045f45",
           x: 3891.8332063803077,
           y: 971.157942391094,
-          width: 119.99982991035986,
-          height: 80.00007349109103,
+          width: 120.00020143934616,
+          height: 79.99999826257145,
           nodeType: "Shape",
           nodeInfo: {
             type: "show-value",
@@ -236,6 +243,7 @@ export const flow: Flow<NodeInfo> = {
               decimals: "2",
               name: "kelvin-value"
             },
+            initializeOnStartFlow: true,
             isSettingsPopup: true
           }
         },
@@ -251,6 +259,7 @@ export const flow: Flow<NodeInfo> = {
             formValues: {
               variableName: "celsius"
             },
+            nodeCannotBeReplaced: false,
             showFormOnlyInPopup: false,
             useInCompositionOnly: false
           }
@@ -259,8 +268,8 @@ export const flow: Flow<NodeInfo> = {
           id: "b513423b-296c-4b7c-97e2-c19ae1af7f57",
           x: 4164.258340020516,
           y: 1217.6918652319987,
-          width: 119.99982991035986,
-          height: 55.99999537850839,
+          width: 119.99973504965708,
+          height: 55.9999929539289,
           nodeType: "Shape",
           nodeInfo: {
             type: "show-value",
@@ -269,6 +278,7 @@ export const flow: Flow<NodeInfo> = {
               decimals: "2",
               name: "celsius-value"
             },
+            initializeOnStartFlow: true,
             isSettingsPopup: true
           }
         },
@@ -276,8 +286,8 @@ export const flow: Flow<NodeInfo> = {
           id: "4d8e1e09-5ca8-47f0-a402-42b1f2eb9530",
           x: 4178.16657098905,
           y: 1917.2253442490537,
-          width: 119.99982991035986,
-          height: 55.99999537850839,
+          width: 119.99973504965708,
+          height: 55.99987635650664,
           nodeType: "Shape",
           nodeInfo: {
             type: "show-value",
@@ -286,13 +296,14 @@ export const flow: Flow<NodeInfo> = {
               decimals: "2",
               name: "fahrenheit-value"
             },
+            initializeOnStartFlow: true,
             isSettingsPopup: true
           }
         },
         {
           id: "000687a7-672c-43ea-be68-74bcbf351a60",
-          x: 2071.567716013227,
-          y: 887.8227899492803,
+          x: 2071.5677938871404,
+          y: 887.8228115787363,
           width: 920.5967829572069,
           height: 191.63253693502952,
           nodeType: "Shape",
@@ -302,6 +313,25 @@ export const flow: Flow<NodeInfo> = {
               annotation: "Celsius to fahrenheit converter",
               fontSize: "45",
               fontWeight: true
+            },
+            isSettingsPopup: true,
+            nodeCannotBeReplaced: true,
+            isAnnotation: true
+          }
+        },
+        {
+          id: "78eb12b6-f4c7-41d8-ba03-b60a7dc134ba",
+          x: 2258.5497416585627,
+          y: 964.3199209993162,
+          width: 485.15638892176094,
+          height: 66.38280975830367,
+          nodeType: "Shape",
+          nodeInfo: {
+            type: "annotation",
+            formValues: {
+              annotation: "bi-directional data flow",
+              fontSize: "25.5",
+              fontWeight: "false"
             },
             isSettingsPopup: true,
             nodeCannotBeReplaced: true,

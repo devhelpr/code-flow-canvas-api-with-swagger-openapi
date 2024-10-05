@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { FlowEngine } from "./flow-engine/flow-engine";
+import { RuntimeFlowEngine } from "./flow-engine/runtime-flow-engine";
 import { endpoints, flow, metaData } from "./flow/codeflowcanvas-flow";
 const app = new OpenAPIHono();
 
@@ -20,13 +20,19 @@ Object.entries(endpoints).forEach(([key, value]) => {
   let outputSchema: any = {};
   if (flowEndpoint.outputs.length > 0) {
     flowEndpoint.outputs.forEach((output: any) => {
-      outputSchema[output.name] =
-        output.type === "show-value" ? z.number() : z.string();
+      if (output.name) {
+        outputSchema[output.name] =
+          output.type === "show-value"
+            ? z.number()
+            : output.type === "show-object"
+            ? z.object({})
+            : z.string();
+      }
     });
   } else {
     outputSchema["result"] = z.string();
   }
-
+  console.log("outputSchema", outputSchema);
   const route = createRoute({
     method: "get" as const,
     path: value.name,
@@ -69,7 +75,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
   });
   app.openapi(route, async (c) => {
     try {
-      const flowEngine = new FlowEngine();
+      const flowEngine = new RuntimeFlowEngine();
       if (flow?.flows?.flow?.nodes) {
         flowEngine.initialize(flow.flows.flow.nodes);
         let outputs: any = {};
@@ -77,7 +83,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
           console.log("output", output);
           flowEngine.canvasApp.setOnNodeMessage(
             (key: string, inputValue: string) => {
-              console.log("output", inputValue);
+              console.log("OnNodeMessage output", key, inputValue);
               const searchOutput = value.outputs.find(
                 (o: any) => o.name === key
               );
@@ -95,6 +101,8 @@ Object.entries(endpoints).forEach(([key, value]) => {
             console.log("result1", result, outputs);
 
             outputs = { result: result };
+          } else {
+            console.log("outputs1", result, outputs);
           }
         } else {
           const result = await flowEngine.runNode(value.id, inputValue);
