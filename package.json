@@ -10,8 +10,8 @@
     "hono": "^4.5.11",
     "zod": "^3.23.8",
     "@devhelpr/expression-compiler": "^0.0.36",
-    "@devhelpr/visual-programming-system": "^0.0.25",
-    "@devhelpr/web-flow-executor": "^0.0.28",
+    "@devhelpr/visual-programming-system": "^0.0.26",
+    "@devhelpr/web-flow-executor": "^0.0.30",
     "tslib": "^2.7.0"
   },
   "devDependencies": {

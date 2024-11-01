@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import { RuntimeFlowEngine } from "./flow-engine/runtime-flow-engine";
+import { RuntimeFlowEngine } from "@devhelpr/web-flow-executor";
 import { endpoints, flow, metaData } from "./flow/codeflowcanvas-flow";
 const app = new OpenAPIHono();
 
@@ -32,7 +32,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
   } else {
     outputSchema["result"] = z.string();
   }
-  console.log("outputSchema", outputSchema);
+
   const route = createRoute({
     method: "get" as const,
     path: value.name,
@@ -65,7 +65,7 @@ Object.entries(endpoints).forEach(([key, value]) => {
         content: {
           "application/json": {
             schema: z.object({
-              ["error"]: z.string(),
+              error: z.string(),
             }),
           },
         },
@@ -80,50 +80,32 @@ Object.entries(endpoints).forEach(([key, value]) => {
         flowEngine.initialize(flow.flows.flow.nodes);
         let outputs: any = {};
         value.outputs.forEach((output) => {
-          console.log("output", output);
           flowEngine.canvasApp.setOnNodeMessage(
             (key: string, inputValue: string) => {
-              console.log("OnNodeMessage output", key, inputValue);
               const searchOutput = value.outputs.find(
                 (o: any) => o.name === key
               );
               if (searchOutput) {
-                console.log("searchOutput", searchOutput);
                 outputs[key] = inputValue;
               }
             }
           );
         });
-        const inputValue = c?.req?.valid("query" as never)?.[value.name];
-        if (key === "default") {
-          const result = await flowEngine.run(inputValue);
-          if (Object.entries(outputs).length === 0) {
-            console.log("result1", result, outputs);
-
-            outputs = { result: result };
-          } else {
-            console.log("outputs1", result, outputs);
-          }
-        } else {
-          const result = await flowEngine.runNode(value.id, inputValue);
-          if (
-            (key.startsWith("default") &&
-              Object.entries(outputs).length === 0) ||
-            (flowEndpoint.type === "start-node" &&
-              Object.entries(outputs).length === 0)
-          ) {
-            outputs = { result: result };
-          }
-          console.log("result2", result, outputs);
+        const inputValue = c.req.valid("query" as never)?.[value.name];
+        const result =
+          key === "default"
+            ? await flowEngine.run(inputValue)
+            : await flowEngine.runNode(value.id, inputValue);
+        if (Object.entries(outputs).length === 0) {
+          outputs = { result };
         }
         flowEngine.destroy();
         return c.json(outputs, 200);
       } else {
         flowEngine.destroy();
-        return c.json({ error: "error" }, 500);
+        return c.json({ error: "Flow nodes not found" }, 500);
       }
     } catch (error) {
-      console.log("error", error);
       return c.json({ error: JSON.stringify(error, null, 2) }, 500);
     }
   });
